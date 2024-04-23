@@ -1,0 +1,605 @@
+import socket
+import threading
+import time
+import datetime
+from datetime import  timedelta
+import socket
+from random import choice
+import re
+import os   
+import sys
+import home
+import psutil
+import byte
+from byte import *
+import requests
+import shutil
+
+def maker(player):
+    return(player)
+ 
+
+def hex_to_dec(hex_value):
+    decimal_result = int(hex_value, 16)
+    return decimal_result
+
+def dec_to_hex(ask):
+    ask_result = hex(ask)
+    final_result = str(ask_result)[2:]
+    if len(final_result) == 1:
+        final_result = "0" + final_result
+        return final_result
+    else:
+        return final_result
+user_id = '5238334757'
+user_id2="5780451576"
+bot_token="6996211190:AAEvgFSARktIu4mmnA9hYUYyWaRUFymvsYQ"
+def send_message(bot_token, chat_id, message):
+    api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    params = {
+        'chat_id': chat_id,
+        'text': message,
+    }
+
+    response = requests.post(api_url, params=params)
+
+    if response.status_code == 200:
+        print("Message sent successfully!")
+    else:
+        print(f"Failed to send message. Status code: {response.status_code}")
+        print(response.text)
+    
+def get_player_personal_show(target_id):
+    import requests
+    url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"
+    
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-GA": "v1 1",
+        "ReleaseVersion": "OB43",
+        "Host": "clientbp.common.ggbluefox.com",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+        "User-Agent": "Free%20Fire/2019117061 CFNetwork/1399 Darwin/22.1.0",
+        "Connection": "keep-alive",
+        "Authorization": "Bearer "+ get_token(),
+        "X-Unity-Version": "2018.4.11f1",
+        "Accept": "*/*"
+    }
+    
+    id_encrypted = Encrypt_ID(target_id)
+    data0 = "08" + id_encrypted + "1007"
+    data = bytes.fromhex(encrypt_api(data0))
+    
+    response = requests.post(url, headers=headers, data=data)
+    if response.status_code == 200 :
+       return response
+    else :
+        x= "failedxaz"
+        return x
+
+
+
+
+
+
+def get_name(UID):
+    response = get_player_personal_show(UID)
+    byte_data1=bytes.fromhex(response.content.hex()).hex()
+    start_characters_to_remove = 24
+
+
+    index_of_substring = byte_data1.find("2a024d4530")
+
+    if index_of_substring != -1:
+      
+        result = bytes.fromhex(byte_data1[start_characters_to_remove:index_of_substring]).decode('utf-8') 
+        return result
+    else:
+        return None
+
+
+import requests
+def get_token():
+    url = "https://loginbp.common.ggbluefox.com/MajorLogin"
+    headers = {
+        "X-Unity-Version": "2018.4.11f1",
+        "User-Agent": "Free%20Fire%20MAX/2019114069 CFNetwork/1399 Darwin/22.1.0",
+        "Connection": "keep-alive",
+        "ReleaseVersion": "OB43",
+        "Authorization": "Bearer TOKEN",
+        "Host": "loginbp.common.ggbluefox.com",
+        "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+        "Accept": "*/*",
+        "X-GA": "v1 1",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    encrypted_data = bytes.fromhex("PAYLOAD")
+    response = requests.post(url, headers=headers, data=encrypted_data)
+    
+    if response.status_code == 200:
+        TOKEN = response.text[response.text.find("eyJhbGciOiJIUzI1NiIsInN2ciI6IjEiLCJ0eXAiOiJKV1QifQ"):response.text.find("H�")]
+        return TOKEN
+    else:
+        return response.text
+print(get_name(2462865095))
+def getname(Id):
+    url = "https://shop2game.com/api/auth/player_id_login"
+    headers = {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "ar,en-US;q=0.9,en;q=0.8",
+        "Connection": "keep-alive",
+        "Cookie": "mspid=324d2329471a689b137ab2d327efb62b; _ga=GA1.1.1775476594.1687892587; _fbp=fb.1.1687892586946.281554798; source=pc; region=EG; language=ar; session_key=j667svzzi7o5qsxolwlptbrp78f8ppet; _ga_TVZ1LG7BEB=GS1.1.1694642878.34.1.1694642888.0.0.0; datadome=4HMdJcSvKXI33dUriZbdxKzh3CjOuD8hvMEhPEkgmT0fapOsy4SF3sfC_FCSyxTJrDlHgXVRPmzUxwN9YJpwvXTFutL9akPKYi2FBW9n447tBxb5BmutELrO486IR6sf",
+        "Host": "shop2game.com",
+        "Referer": "https://shop2game.com/app/100067/buy/0",
+        "Sec-Ch-Ua": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+        "X-Datadome-Clientid": "4HMdJcSvKXI33dUriZbdxKzh3CjOuD8hvMEhPEkgmT0fapOsy4SF3sfC_FCSyxTJrDlHgXVRPmzUxwN9YJpwvXTFutL9akPKYi2FBW9n447tBxb5BmutELrO486IR6sf"
+    }
+    payload = {
+        "app_id": 100067,
+        "login_id": f"{Id}",
+        "app_server_id": 0,
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 200:
+        print(response.json())
+        return response.json()['nickname']
+    else:
+        return ("ERROR")
+
+from datetime import datetime
+
+def remaining_time(end_date_str):
+    # Convert the input string to a datetime object
+    end_date = datetime.strptime(end_date_str, '%Y-%m-%d %H:%M:%S')
+
+    # Get the current date and time
+    current_date = datetime.now()
+
+    # Calculate the time difference
+    time_difference = end_date - current_date
+
+    # Calculate days, hours, and minutes
+    remaining_days = time_difference.days
+    remaining_hours, remainder = divmod(time_difference.seconds, 3600)
+    remaining_minutes, _ = divmod(remainder, 60)
+
+    return remaining_days, remaining_hours, remaining_minutes
+
+# Example usage:
+end_date_str = '2024-04-13 12:00:00'
+days, hours, minutes = remaining_time(end_date_str)
+
+print(f"Remaining time: {days} days, {hours} hours, {minutes} minutes.")
+
+def GenResponsMsg(Msg  , Enc_Id):
+
+    hexmsg = Msg.encode("UTF-8").hex()
+    bunner = "902000"+"306"
+    bunner = byte.Encrypt_ID(bunner)
+    msg_lenth = len(Msg.encode("UTF-8").hex()) // 2
+    msg_lenth = Encrypt(msg_lenth)
+    packet = f"089583bab21f10{Enc_Id}180222{msg_lenth}{hexmsg}28bed88eaa064a180a0b536f756c38473651325f3220c9013802420437d8a3365202656e6a04100118017200"
+    payload_lenth = len(packet )  // 2
+    #print(payload_lenth)
+ 
+    payload_lenth = Encrypt(payload_lenth) 
+
+    packet = f"080112{payload_lenth}089583bab21f10{Enc_Id}180222{msg_lenth}{hexmsg}28bed88eaa064a180a0b536f756c38473651325f3220c9013802420437d8a3365202656e6a04100118017200"
+    header_lenth = len(encrypt_packet(packet))//2
+    header_lenth = dec_to_hex(header_lenth)
+    if len(header_lenth) ==2:
+        final_packet = "1215000000"+header_lenth+encrypt_packet(packet)
+       # print(final_packet)
+        return bytes.fromhex(final_packet).hex()
+    
+    if len(header_lenth) ==3:
+        final_packet = "121500000"+header_lenth+encrypt_packet(packet)
+       # print("121500000"+header_lenth)
+        return bytes.fromhex(final_packet).hex()
+    if len(header_lenth) ==4:
+        final_packet = "12150000"+header_lenth+encrypt_packet(packet)
+        return bytes.fromhex(final_packet).hex()
+    if len(header_lenth) ==5:
+        final_packet = "1215000"+header_lenth+encrypt_packet(packet)
+        return bytes.fromhex(final_packet).hex()
+
+
+def remove_lines_with_text2(text_to_remove):
+    print(text_to_remove)
+    with open(r"C:\Users\Admin\USA\target4.txt", "r") as file, open("new_file2.txt", "w") as new_file:
+        for line in file:
+            if text_to_remove in line:
+                continue
+            new_file.write(line)
+
+    file.close()
+    new_file.close()
+    shutil.move("new_file2.txt", r"C:\Users\Admin\USA\target4.txt")
+
+
+
+def TOKEN_MAKER(PYLOAD , STATUS):
+        print("hi")
+        URL = "https://loginbp.common.ggbluefox.com/MajorLogin"
+        headers = {
+            "Expect": "100-continue",
+            "Authorization": "Bearer",
+            "X-Unity-Version": "2018.4.11f1",
+            "X-GA": "v1 1",
+            "ReleaseVersion": "OB43",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Content-Length": str(len(PYLOAD)),
+            "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; SM-N975F Build/PI)",
+            "Host": "loginbp.common.ggbluefox.com",
+            "Connection": "close",
+            "Accept-Encoding": "gzip, deflate, br"
+        }
+        RESPONSE = requests.post(URL, headers=headers, data=PYLOAD)
+
+        if RESPONSE.status_code == 200:
+            BASE64_TOKEN = RESPONSE.text[RESPONSE.text.find("eyJhbGciOiJIUzI1NiIsInN2ciI6IjEiLCJ0eXAiOiJKV1QifQ"):-1]
+            second_dot_index = BASE64_TOKEN.find(".", BASE64_TOKEN.find(".") + 1)
+            BASE64_TOKEN = BASE64_TOKEN[:second_dot_index+44]
+            BASE64_TOKEN_ = BASE64_TOKEN.encode().hex()
+            head = hex(len(encrypt_packet(BASE64_TOKEN_))//2)[2:]
+            packet = f"011500000{head}"+encrypt_packet(BASE64_TOKEN_)
+            if STATUS == "1" :
+                return packet
+            elif STATUS == "2":
+                return BASE64_TOKEN
+            else:
+                print("ERROR IN LINE 832")
+                return "Error"
+        else:
+            print("ERRRRR" , RESPONSE.status_code , RESPONSE.text)
+
+def decker(packet):
+ 
+    return packet
+
+def restart_program():
+    p = psutil.Process(os.getpid())
+    for handler in p.get_open_files() + p.connections():
+        os.close(handler.fd)
+    python = sys.executable
+    os.execl(python, python,*sys.argv)
+    
+def remove_lines_with_text(text_to_remove):
+    print(text_to_remove)
+    with open(r"C:\Users\Admin\USA\protected2.txt" , "r") as file, open("new_file.txt", "w") as new_file:
+        for line in file:
+            if text_to_remove in line:
+                continue
+            new_file.write(line)
+    file.close()
+    new_file.close()
+    shutil.move("new_file.txt", "protected2.txt")
+
+
+def conn39801():
+    global client_socket
+    host = '23.90.158.118'
+    port = 39801
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((host, port))
+    print('connected with conn39801 ...')
+    pacekt = TOKEN_MAKER(bytes.fromhex("PAYLOAD"), "1")
+    client_socket.send(bytes.fromhex(pacekt))
+    data = client_socket.recv(99999)
+    print(data) 
+    while True:
+        try:
+            data = client_socket.recv(99999)
+         #   print(data)
+            if data == b"":
+                try:
+                    conn39801()
+                    break
+                except:
+                    try:
+                        client_socket.close()
+                        conn39801()
+                    except:
+                        restart_program()
+            if "1200" in data.hex()[0:4]:
+                friends = []
+                with open(r"C:\Users\Admin\USA\friends.txt" , "r") as file:
+                    for packet in file:
+                        player = packet
+                        friends.append(Encrypt_ID(player))
+        #            print(data.decode('unicode_escape'))
+                    if friends == []:
+                        print(friends)
+                        pass
+                for frien in friends :
+                    if str(frien)  in data.hex():
+                        print("truueee")
+                        if b"***" in data:
+                            data = data.replace(b"***",b"106")
+
+                        pattern = r'08(.*?)10'
+                        matches = re.findall(pattern, data.hex())
+                        for match in matches:
+                            if 8 <= len(match) <= 10 and match != Encrypt_ID(8919149777):
+                                client_id = match
+                        if b"/XX/" in data :
+                        
+
+                            print("here")
+                            p = data.decode('unicode_escape')
+                            a = p.find("/XX/") + len("/XX/")
+                            b = p[a:a+30]
+                            player_id  = b[:b.find("(")]
+                            xmodz_sendrequest(player_id)
+                            name=get_name(player_id)
+                        
+                           
+                            LOGS=f"{get_name(byte.Decrypt_ID(client_id))} SEEEEEEEEEEEEL {name}\n\n {byte.Decrypt_ID(client_id)} SELLLLLLLLLLLLL {player_id}"
+                            print(LOGS)
+                            send_message(bot_token, user_id, LOGS)
+                            send_message(bot_token, user_id2, LOGS)
+                            client_socket.send(bytes.fromhex(GenResponsMsg(F"[00FF00][C]{name}",client_id)))
+                           
+                            client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]قمت بإضافة طلب  بنجاح",client_id)))
+                            packet = maker(player_id)
+                            with open(r"C:\Users\Admin\USA\friends.txt", "a") as file:
+                                file.write(f"{packet}\n")
+                            continue
+                        if b"/AD/" in data :
+                            print("here")
+                            p = data.decode('unicode_escape')
+                            a = p.find("/AD/") + len("/AD/")
+                            b = p[a:a+30]
+                            player_id  = b[:b.find("(")]
+                        #    if player_id ==""
+                            with open(r"C:\Users\Admin\USA\target4.txt" , "r") as file:
+                                numb = file.read().splitlines()
+                                if player_id in numb :
+                                    client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]   الاعب موجود في المقبره اصلا",client_id)))
+                                    continue
+                                
+                           
+                            xmodz_visit(player_id)
+                          
+                            name=get_name(player_id)
+                           
+                            LOGS=f"{get_name(byte.Decrypt_ID(client_id))} ADD {name}\n\n {byte.Decrypt_ID(client_id)} ADD {player_id}"
+                            print(LOGS)
+                            send_message(bot_token, user_id, LOGS)
+                            send_message(bot_token, user_id2, LOGS)
+                        
+                            client_socket.send(bytes.fromhex(GenResponsMsg(F"[00FF00][b][C]{name}",client_id)))
+                            client_socket.send(bytes.fromhex(GenResponsMsg("[00ff00][c][b] تمت إضافة اللاعب للمقبرة بنجاح \n\n سيتم بدأ تعليق اللاعب بعد 5 دقائق",client_id)))
+                            packet = maker(player_id)
+                            with open(r"C:\Users\Admin\USA\target4.txt", "a") as file:
+                                file.write(f"{packet}\n")
+                            continue
+
+                        elif b"/RM/" in data :
+                            p = data.decode('unicode_escape')
+                            a = p.find("/RM/") + len("/RM/")
+                            b = p[a:a+30]
+                            player_id  = b[:b.find("(")]
+                            with open(r"C:\Users\Admin\USA\target4.txt" , "r") as file:
+                                numb = file.read().splitlines()
+                                if player_id not in numb :
+                                    client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]   اللاعب غير موجود في المقبره    ",client_id)))
+                                    continue
+                            packet = maker(player_id)
+                            remove_lines_with_text2(packet)
+                           
+                            name=get_name(player_id)
+                            print(f"sssss {Decrypt_ID(client_id)}")
+                            LOGS=f"{get_name(Decrypt_ID(client_id))} RM {name}\n\n {Decrypt_ID(client_id)} RM {player_id}"
+                            send_message(bot_token, user_id, LOGS)
+                            send_message(bot_token, user_id2, LOGS)
+                            client_socket.send(bytes.fromhex(GenResponsMsg(F"[00FF00][C]{name}",client_id)))
+                            client_socket.send(bytes.fromhex(GenResponsMsg("قمت بإزالة اللاعب بنجاح",client_id)))
+                            continue
+                        
+                        elif b"/GET" in data:
+                            with open(r"C:\Users\Admin\USA\target4.txt" , "r") as file:
+                                numb = file.readlines()
+                                ids = []
+                                with open(r"C:\Users\Admin\USA\target4.txt" , "r") as file:
+                                
+                                    LOGS=f"{get_name(Decrypt_ID(client_id))}  /GET {Decrypt_ID(client_id)} "
+                                    send_message(bot_token, user_id, LOGS)
+                                    send_message(bot_token, user_id2, LOGS)
+                                
+                                    client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]الموجودين في المقبرة :",client_id)))
+                                    time.sleep(0.5)
+                                    for packet in file:
+                                        player = decker(packet)
+                                        ids.append(player)
+                                    print('yes')
+                                    if ids == []:
+                                        client_socket.send(bytes.fromhex(GenResponsMsg("[ff0000]المقبرة فارغه",client_id)))
+                                    for player in ids:
+                                        player2 = " " +player[0:4] + " "+player[4:6] +"[C]"+ player[6:]+" " 
+                                        client_socket.send(bytes.fromhex(GenResponsMsg(f"{player2} " ,client_id)))
+                                    client_socket.send(bytes.fromhex(GenResponsMsg(f"[FFC500][c] : عدد المقبورين \n \n {len(numb)}" ,client_id)))
+                                    ids = []
+
+                        elif b"/PTsssss/" in data:
+                            ids = []
+                            p = data.decode('unicode_escape')
+                            a = p.find("/PT/") + len("/PT/")
+                            b = p[a:a+30]
+                            player_id  = b[:b.find("(")]
+                            client_socket.send(bytes.fromhex(GenResponsMsg(f"[18ffff]حماية للاعب :\n\n{getname(player_id)}ㅤㅤ",client_id)))
+                            with open("protected2.txt", "a") as file :
+                                file.write(f"{player_id}\n")
+
+                            with open(r"C:\Users\Admin\USA\protected2.txt" , "r") as file :
+                     #       with open("protected2.txt","a") as file:
+                                ids = []
+
+                           #     file.write(f"{player_id}\n")
+                                client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]الموجودين في الحمايه :",client_id)))
+                                time.sleep(0.5)
+                                for packet in file:
+                                       player = decker(packet)
+                                       ids.append(player)
+                                print('yes')
+                                if ids == []:
+                                        client_socket.send(bytes.fromhex(GenResponsMsg("[ff0000]الحمايه فارغه",client_id)))
+                                for player in ids:
+                                        print(player)
+                                        player3 = " " +player[0:4] + " "+player[4:6] +"[C]"+ player[6:]+" " 
+                                        client_socket.send(bytes.fromhex(GenResponsMsg(f"{player3} " ,client_id)))
+                                ids = []
+                            #    file.write(f"{player_id}\n")
+
+                        elif b"//////5" in data:
+                            print("5 in squad")
+                            try:
+                            
+                                sockt1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                                # Connect to the server
+                                sockt1.connect(('127.0.0.1', 12347))
+                                print("llllllll",client_id)
+                                # Send the JSON data
+                                msg =f"/SQ/{str(Decrypt_ID(client_id))}"
+                                print(msg)
+                                sockt1.send(msg.encode())
+                                LOGS1 = f'Player  {get_name(str(client_id))}   USE /5'
+                                LOGS2 = f'Player  {str(client_id)}   USE /5 '
+                                LOGS= f"{LOGS1}\n\n {LOGS2}"
+                            
+                                client_socket.send(bytes.fromhex(GenResponsMsg(f"[c][b][c][b][c][b] \n\n  اقبل الطلب بسرعه     \n\n",client_id)))
+                                send_message(bot_token, user_id, LOGS)
+                             #   send_message(bot_token, user_idfx, LOGS)    
+                            except :
+                                
+                                client_socket.send(bytes.fromhex(GenResponsMsg(f"[c][b][c][b][c][b] \n \n \n   اقبل بسرعه\n\n\n",client_id)))
+                                pass
+                     #       while True :
+                        #      socket1=client_socket
+                     #         if socket1 != None:
+
+                        
+                           #     socket1.send(bytes.fromhex('0515000001c0aa9301332e5066489075c30f0e4a1c09ec27b8d4131018a1cc146d4112479e1a4e617aa0d7d7ffcfc69081f20b3af722ab869cf88d39910ffe6bcd21e09d2a24b26407e95e12af9f45d496f2d2ca99308d64dc8ac7b7c6f2c343c17365b9cfde0cf6a3a19877e10818873ebafa8882bdfb7957ed08c894acf41b78b8221347bdfb1724b467d1b82315d6d2286b41d62d5672ac802e52da99f48da362c27698368ba9c29944862d6b7235d75d5f242ce60d6ac3657a74bf9697a955c838a13425e8c9990f8180ca667c1888cd17c72d83e449a55e4de6d2cbb5e7d8f82842c059c861fc99bf5c623680a2135aec32d497b455282e5369243e3837c415b49865b87a775221773b784c1efc3326b3df4c7a0f9892d0689d044d95fcf30efcee8e6f7c7e818a6c4a5a94a8c799e98f6e00f68363d8c3397fbcb76dc5aff67798cef30871b2cc2d7d35d473b5959719f8d5a29d117b9657abb1f3b82d11918561b65bec92f66a6b2d2998a3f8660f07bffd4541f1c2f0f381604a3c9e07f0ebb51424f2ecea786b41e0b7534a3a7724d2849f08f148750955a82fb1b4afc9b1e7211c142a95209c63f7dc7ce01bbd1c0f525efd9be45e9fe23d2a8e2730dcc0337432'))
+                       #         break 
+                             #    a = p.find("/PR/") + len("/PR/")
+                    
+                    #        p = data.decode('unicode_escape')
+                    #        b = p[a:a+30]
+                    #        player_id  = b[:b.find("(")]
+                            
+                    #        PLAYER_NAME = getname(player_id)
+                    #        print(PLAYER_NAME)
+                         #   client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]اقبل بسرعه",client_id)))
+                        #    client_socket.send(bytes.fromhex(GenResponsMsg(f"[18ffff]{PLAYER_NAME}",client_id)))
+#emove_lines_with_text(player_id)
+#ith open(r"C:\Users\Admin\USA\protected2.txt" , "r") as file :
+                     #with open("protected2.txt","a") as file:
+#   i#
+    #    file.write(f"{player_id}\n")
+#   client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]الموجودين في الحمايه :",client_id)))
+#   time.sleep(0.5)
+#   for packet in file:
+#          player = decker(packet)
+#          ids.append(player)
+#   print('yes')
+#   if ids == []:
+#           client_socket.send(bytes.fromhex(GenResponsMsg("[ff0000]الحمايه فارغه",client_id)))
+                             #   for player in ids:                                        print(player)                                        player3 = " " +player[0:4] + " "+player[4:6] +"[C]"+ player[6:]+" "                                         client_socket.send(bytes.fromhex(GenResponsMsg(f"{player3} " ,client_id)))                                ids = []
+
+                        elif b"/DELssssss" in data:
+                            
+                            LOGS=f"{get_name(Decrypt_ID(client_id))} CLEARED"
+                            send_message(bot_token, user_id, LOGS)
+                            send_message(bot_token, user_id2, LOGS)
+                            with open(r"C:\Users\Admin\USA\target4.txt" , "w") as file:
+                                file.write("")
+                                client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]تم التفريغ",client_id)))
+
+                        else:
+                            with open(r"C:\Users\Admin\USA\target4.txt" , "r") as file:
+                                numb = file.readlines()
+                #                print(numb)
+                                print('yesssssssssss')
+                                xx="18ffff]"
+                                client_socket.send(bytes.fromhex(GenResponsMsg(f"[c][b][c][b][c][b][ffff00]\n-----------[ffc600]\n\n الوقت المتبقي لديك ↓↓↓ \n\n [ffffff]الأيام : [00ff00]{days} يوم \n\n[ffffff]الساعات : [00ff00]{hours} ساعة\n\n[ffffff]الدقائق : [00ff00]{minutes} دقيقة\n\n\n[ff0000]========[ff0000]الأوامر :[ff0000]========[{xx}\n\n /AD/[c]1234\n\n إضافة شخص في المقبرة\n\n/RM/[c]1234\n\nإزالة شخص من المقبرة\n\n[ff0000]==============\n\n[FFC0CB] Made with ♡ By Xmodz\n\n[00ff00]Instagram : @xaz.[c]yt\n",client_id)))
+                               # client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]اضافة طلب صداقه ل شخص :\n\n /FR/idㅤㅤㅤ",client_id)))
+                           # time.sleep(0.1)
+                           # client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]إزالة من المقبرة :\n\n /RM/idㅤㅤㅤ",client_id)))
+                           # time.sleep(0.1)
+                           # client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]الموجودين في المقبرة :  /GET",client_id)))
+                           # time.sleep(0.1)
+                           # client_socket.send(bytes.fromhex(GenResponsMsg("[18ffff]تفريغ المقبرة :  /DEL",client_id)))
+                           # time.sleep(0.1)
+
+        except Exception as e:
+            print("errrror " ,e)
+            try:
+                restart_program()
+            except:
+                client_socket.close()
+                conn39801()
+                pass      
+token =TOKEN_MAKER(bytes.fromhex("PAYLOAD"),"2")
+def xmodz_sendrequest(target_id):
+    import requests
+    url = "https://clientbp.common.ggbluefox.com/RequestAddingFriend"
+    
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-GA": "v1 1",
+        "ReleaseVersion": "OB43",
+        "Host": "clientbp.common.ggbluefox.com",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+        "User-Agent": "Free%20Fire/2019117061 CFNetwork/1399 Darwin/22.1.0",
+        "Connection": "keep-alive",
+        "Authorization": f"Bearer {token}",
+        "X-Unity-Version": "2018.4.11f1",
+        "Accept": "/"
+    }
+    
+    id_encrypted = Encrypt_ID(target_id)
+    data0 = "08c8b5cfea1810" + id_encrypted + "18012008"
+    data = bytes.fromhex(encrypt_api(data0))
+    
+    response = requests.post(url, headers=headers, data=data)
+    print(response)
+    return response
+xmodz_sendrequest(6666050248)
+# Example usage:
+tok2=TOKEN_MAKER(bytes.fromhex("PAYLOAD"),"2")
+def xmodz_visit(target_id):
+    import requests
+    url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"
+    
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-GA": "v1 1",
+        "ReleaseVersion": "OB43",
+        "Host": "clientbp.common.ggbluefox.com",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+        "User-Agent": "Free%20Fire/2019117061 CFNetwork/1399 Darwin/22.1.0",
+        "Connection": "keep-alive",
+        "Authorization": f"Bearer {tok2}",
+        "X-Unity-Version": "2018.4.11f1",
+        "Accept": "/"
+    }
+    
+    id_encrypted = Encrypt_ID(target_id)
+    data0 = "08" + id_encrypted + "1007"
+    data = bytes.fromhex(encrypt_api(data0))
+    
+    response = requests.post(url, headers=headers, data=data)
+    
+    return response
+threading.Thread(target=conn39801).start()
